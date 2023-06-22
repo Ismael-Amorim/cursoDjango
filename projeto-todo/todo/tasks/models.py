@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 
@@ -20,6 +21,7 @@ class Task(models.Model):
         choices=STATUS,
     )
 
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     # campo de data do django, cria automatico esse valor qunado for criado um valor no banco
     update_at = models.DateTimeField(auto_now=True)
