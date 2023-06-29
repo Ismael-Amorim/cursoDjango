@@ -1,21 +1,45 @@
 {% extends 'base.html' %}
 
-{% block title%}Lista de tarefas {% endblock %}
+{% block title%}To do List {% endblock %}
 
 {% block content %}
 <div class="offset-1 col-10 list-div">
-    <h1>Lista de Tarefas</h1>
+    <h1>To do List</h1>
+    <div class="container dashboard">
+        <div class="col-4 dashboard-box" id="dashboard-lastdays">
+            <h4>Finished in the last 30 days</h4>
+            <span>{{ tasksrecently }}</span>
+        </div>
+        <div class="col-4 dashboard-box" id="dashboard-done">
+            <h4>Finished tasks</h4>
+            <span>{{ tasksdone}}</span>
+
+        </div>
+        <div class="col-4 dashboard-box" id="dashboard-doing">
+            <h4>To do tasks</h4>
+            <span>{{ tasksdoing }}</span>
+
+        </div>
+    </div>
     <a id="add-link" href="newTask/">
         <div class="col-2 add-div">
-            <i class="fas fa-plus"></i> Adicionar tarefa
+            <i class="fas fa-plus"></i> Add task
         </div>
     </a>
     <div class="col-9 search-div">
         <form method="GET" id="search-form">
             <input class="form-control" type="text" id="search" name="search"
-                placeholder="Digite o nome da tarefa para buscar..." value="{{ request.GET.search }}">
+                placeholder="Enter the task name to search..." value="{{ request.GET.search }}">
             <i class="fas fa-search" id="search-btn" id="search-btn"></i>
         </form>
+    </div>
+    <div class="col-12 filter-div">
+        <span>Filter by:</span>
+        <select name="filter" id="filter" class="form-control">
+            <option value="">Choose a option</option>
+            <option value="done">Finished tasks </option>
+            <option value="doing">To do tasks </option>
+        </select>
     </div>
     {% if messages %}
     <ul class="messages">
@@ -25,11 +49,16 @@
     </ul>
     {% endif %}
     <ul class="task-list">
-        {%for task in tasks %}
+        {% for task in tasks %}
+        {% if task.done == 'doing' %}
         <li class="task-item">
+            {% else %}
+        <li class="task-item done">
+            {% endif %}
             <span><a href="/task/{{task.id}}">{{task.title}}</a></span>
             <a href="delete/{{task.id}}" class="delete-btn"><span><i class="fas fa-trash"></i></span></a>
             <a href="edit/{{task.id}}"><span><i class="fas fa-edit"></i></span></a>
+            <a href="changestatus/{{task.id}}"><span><i class="fas fa-check"></i></span></a>
         </li>
         {% endfor %}
     </ul>
@@ -38,13 +67,11 @@
             {% if tasks.has_previous %}
             <a href="?page={{ tasks.previous_page_number}}"><i class="fas fa-arrow-left"></i></a>
             {% endif %}
-
             {% if tasks.paginator.num_pages %}
             <span class="current">
-                {{ tasks.number }} de {{ tasks.paginator.num_pages }}
+                {{ tasks.number }} of {{ tasks.paginator.num_pages }}
             </span>
             {% endif %}
-
             {% if tasks.has_next %}
             <a href="?page={{ tasks.next_page_number}}"><i class="fas fa-arrow-right"></i></a>
             {% endif %}
